@@ -1,0 +1,41 @@
+<!--
+/********************************************************************************
+ * Copyright (c) 2007 INRIA. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     INRIA - Initial implementation
+ *     
+ ******************************************************************************/
+-->
+
+<!-- author: BENELALLAM Amine -->
+
+<!-- How to configure this ant script:
+	Run as->Ant Build...
+		Set:
+			- Run in same JRE
+-->
+
+<project name="java2kdmTrans" default="transform">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="../libs/ant-contrib-1.0b3.jar" />
+	<target name="transform">
+		<antcall target="java2kdm"/>		
+	</target>
+	
+	<target name="java2kdm">
+		<atl.loadModel modelHandler="EMF" name="java" metamodel="MOF" path="../models/java.ecore" />	
+		<atl.loadModel modelHandler="EMF" name="kdm" metamodel="MOF" path="../models/kdm.ecore" />			
+		<atl.loadModel modelHandler="EMF" name="javaModel" metamodel="java" path="../inputs/set1.xmi" />				
+		<atl.launch path="../transformations/java2kdm.asm" refining="true">
+			<inmodel name = "IN" model = "javaModel"/>
+			<outmodel name="OUT" model="kdmModel" metamodel = "kdm"/>
+			<option name="allowInterModelReferences" value="true"/>
+		</atl.launch>
+		<atl.saveModel model="kdmModel" path="../outputs/set1.kdm.xmi"/>	
+	</target>
+</project>
+	

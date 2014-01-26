@@ -1,0 +1,40 @@
+<!--
+/********************************************************************************
+ * Copyright (c) 2007 INRIA. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     INRIA - Initial implementation
+ *     
+ ******************************************************************************/
+-->
+
+<!-- author: BENELALLAM Amine -->
+
+<!-- How to configure this ant script:
+	Run as->Ant Build...
+		Set:
+			- Run in same JRE
+-->
+
+<project name="trace2metricsTrans" default="transform">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="../libs/ant-contrib-1.0b3.jar" />
+	<target name="transform">
+		<antcall target="trace2metrics"/>		
+	</target>
+	
+	<target name="trace2metrics">
+		<atl.loadModel modelHandler="EMF" name="Trace" metamodel="MOF" path="../models/Trace.ecore" />
+		<atl.loadModel modelHandler="EMF" name="Metrics" metamodel="MOF" path = "../models/Metrics.ecore"  />	
+		<atl.loadModel modelHandler="EMF" name="traceModel" metamodel="Trace" path="../inputs/set1.trace.xmi" />				
+		<atl.launch path="../transformations/Trace2PerformanceMetrics.asm" refining="true">
+			<inmodel name = "IN" model = "traceModel"/>
+			<outmodel name="OUT" model="metricsModel" metamodel = "Metrics"/>
+		</atl.launch>	
+		<atl.saveModel model="traceModel" path="../outputs/set1.metrics.xmi"/>	
+	</target>
+</project>
+	

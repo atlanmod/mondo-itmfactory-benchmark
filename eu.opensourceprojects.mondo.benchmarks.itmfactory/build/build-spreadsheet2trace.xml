@@ -1,0 +1,40 @@
+<!--
+/********************************************************************************
+ * Copyright (c) 2007 INRIA. 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     INRIA - Initial implementation
+ *     
+ ******************************************************************************/
+-->
+
+<!-- author: BENELALLAM Amine -->
+
+<!-- How to configure this ant script:
+	Run as->Ant Build...
+		Set:
+			- Run in same JRE
+-->
+
+<project name="sheet2traceTrans" default="transform">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="../libs/ant-contrib-1.0b3.jar" />
+	<target name="transform">
+		<antcall target="spreadsheet2trace"/>		
+	</target>
+	
+	<target name="spreadsheet2trace">
+		<atl.loadModel modelHandler="EMF" name="Sheet" metamodel="MOF" path="../models/SpreadsheetMLSimplified.ecore" />
+		<atl.loadModel modelHandler="EMF" name="Trace" metamodel="MOF" path = "../models/trace.ecore"  />	
+		<atl.loadModel modelHandler="EMF" name="sheetModel" metamodel="Sheet" path="../inputs/set1.sheet.xmi" />				
+		<atl.launch path="../transformations/SpreadsheetMLSimplified2Trace.asm">
+			<inmodel name = "IN" model = "sheetModel"/>
+			<outmodel name="OUT" model="traceModel" metamodel = "Trace"/>
+		</atl.launch>	
+		<atl.saveModel model="traceModel" path="../outputs/set1.trace.xmi"/>	
+	</target>
+</project>
+	

@@ -1,0 +1,35 @@
+
+-----------------------
+Acknowledgment
+----------------------
+0) This project aims to serve as a benchmark for scalable ATL transformations 
+1) These transformations are all coming from the MoDisco project
+2) Some inputs are realistic, and recovered using some MoDisco discoverers 
+---------------
+Prerequisites:
+---------------
+1) Install Eclipse with EMF + ATL :
+
+	--> You can use the Eclipse market place to install both projects.    		
+
+-----------------------------------------
+This project organization
+-----------------------------------------
+						
+	--> "models":		The metamodels, used within this projects, expressed in .ecore
+							
+	--> "inputs":		Sample inputs to run the different transformations, these inputs have different sizes.
+						Their names are delivered in a way to help users figure out to which metamodel they conform to.
+						For example, setX.java.xmi is conform to the java metamodel 	
+							
+	--> "transformations:	The transformations that this project contains
+	
+	--> "builds" : the different ant scripts aiming to launch the different transformations
+	
+-------------------------------------------
+Launching a transformation 
+------------------------------------------	
+
+The "build-XXX.xml" ANT scripts,  allow executing the different transformations available here in the project,
+Note that the values of the properties must be set for each one of the scripts before launching.
+
