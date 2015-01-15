@@ -30,7 +30,8 @@ etc.).
 Based on the previously generated model, this transformation generates a UML diagram in order to allow integrating KDM-compliant tools (i. e., discoverers) with UML-compliant
 tools (e.g. modelers, model transformation tools, code generators,etc.).
 
-The transformations can be launched from the ant files contained in the **build** folder.
+The transformations can be launched from the ant files contained in the **build** folder. 
+Please note that the input and output models path should be edited before launching the transformation
 
 ### Queries
 #### Java code quality
