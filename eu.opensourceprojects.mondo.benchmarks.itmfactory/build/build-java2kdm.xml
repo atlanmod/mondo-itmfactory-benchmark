@@ -1,6 +1,6 @@
 <!--
 /********************************************************************************
- * Copyright (c) 2007 INRIA. 
+ * Copyright (c) 2014 INRIA. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at
@@ -21,6 +21,12 @@
 -->
 
 <project name="java2kdmTrans" default="transform">
+	
+	<!-- set this property the the appropriate input model name-->
+	<property name = "inputModel" location ="../inputs/test_model.java.xmi"/>
+	<!-- set this property the the appropriate output model name-->
+	<property name = "outputModel" location ="../outputs/test_model.kdm.xmi" />
+	
 	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="../libs/ant-contrib-1.0b3.jar" />
 	<target name="transform">
 		<antcall target="java2kdm"/>		
@@ -29,13 +35,14 @@
 	<target name="java2kdm">
 		<atl.loadModel modelHandler="EMF" name="java" metamodel="MOF" path="../models/java.ecore" />	
 		<atl.loadModel modelHandler="EMF" name="kdm" metamodel="MOF" path="../models/kdm.ecore" />			
-		<atl.loadModel modelHandler="EMF" name="javaModel" metamodel="java" path="../inputs/set1.xmi" />				
+		<atl.loadModel modelHandler="EMF" name="javaModel" metamodel="java" path="${inputModel}" />				
 		<atl.launch path="../transformations/java2kdm.asm" refining="true">
 			<inmodel name = "IN" model = "javaModel"/>
 			<outmodel name="OUT" model="kdmModel" metamodel = "kdm"/>
 			<option name="allowInterModelReferences" value="true"/>
 		</atl.launch>
-		<atl.saveModel model="kdmModel" path="../outputs/set1.kdm.xmi"/>	
+		<atl.saveModel model="kdmModel" path="${outputModel}"/>	
 	</target>
+	
 </project>
 	

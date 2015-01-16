@@ -1,6 +1,6 @@
 <!--
 /********************************************************************************
- * Copyright (c) 2007 INRIA. 
+ * Copyright (c) 2014 INRIA. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at
@@ -21,6 +21,12 @@
 -->
 
 <project name="kdm2umlTrans" default="transform">
+	
+	<!-- set this property the the appropriate input model name-->
+	<property name = "inputModel" location="../inputs/test_model.kdm.xmi"/>
+	<!-- set this property the the appropriate output model name -->
+	<property name = "outputModel" location="../outputs/test_model.uml.xmi"/>
+	
 	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="../libs/ant-contrib-1.0b3.jar" />
 	<target name="transform">
 		<antcall target="kdm2uml"/>		
@@ -29,13 +35,14 @@
 	<target name="kdm2uml">
 		<atl.loadModel modelHandler="EMF" name="kdm" metamodel="MOF" path="../models/kdm.ecore" />
 		<atl.loadModel modelHandler="EMF" name="uml" metamodel="MOF" path = "../models/uml.ecore"  />	
-		<atl.loadModel modelHandler="EMF" name="kdmModel" metamodel="kdm" path="../inputs/set1.kdm.xmi" />				
+		<atl.loadModel modelHandler="EMF" name="kdmModel" metamodel="kdm" path= "${inputModel}"/>				
 		<atl.launch path="../transformations/KDMtoUML.asm" refining="true">
 			<inmodel name = "IN" model = "kdmModel"/>
 			<outmodel name="OUT" model="umlModel" metamodel = "uml"/>
 			<option name="allowInterModelReferences" value="true"/>
 		</atl.launch>	
-		<atl.saveModel model="umlModel" path="../outputs/set1.uml.xmi"/>	
+		<atl.saveModel model="umlModel" path="${outputModel}"/>	
 	</target>
+	
 </project>
 	
