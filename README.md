@@ -41,7 +41,7 @@ identify well-known anti-patterns in Java source code and fix the
 corresponding issues by a model transformation. The input format
 of the transformations is a model conforming to the Java metamodel. For a specification for the transformations we refer the
 reader to the implementations of these fixes in well-known codeanalysis tools like CheckStyle and PMD.
-References to the documentation for each code fix considered in this benchmark can be found [here](http://checkstyle.sourceforge.net/availablechecks.html).
+References to the documentation for each code fix considered in this benchmark can be found [here](http://checkstyle.sourceforge.net/checks.html).
 
 
 
