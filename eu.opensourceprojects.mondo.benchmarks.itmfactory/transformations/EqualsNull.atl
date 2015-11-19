@@ -1,0 +1,59 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module EqualsNull;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context OclAny def : isInCondition : Boolean =
+	if self.refImmediateComposite().oclIsTypeOf(JAVA!WhileStatement) or 
+		self.refImmediateComposite().oclIsTypeOf(JAVA!IfStatement) or 
+			self.refImmediateComposite().oclIsTypeOf(JAVA!ForStatement) then
+		self = self.refImmediateComposite().expression
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInCondition
+		endif
+	endif;
+
+helper context JAVA!MethodInvocation def : checkEqualsNull : Boolean =
+	if self.method.name = 'equals' then
+		if self.arguments->size() = 1 then
+			self.arguments->first().oclIsTypeOf(JAVA!NullLiteral)
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+rule TestCondition {
+	from
+		s: JAVA!MethodInvocation (s.isInCondition and s.checkEqualsNull)
+	to
+		t: CHK!EqualsNull (
+			description <- 'tests for null should not use the equals() method, check method ' + s.getAbstractMethodDeclaration.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<anomalies:UnnecessaryFinalModifier xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org" description="not need to tag methods as final in a final class, check class Xxx">
+  <trace href="../input/test_unnecessaryfinalmodifier_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.2"/>
+</anomalies:UnnecessaryFinalModifier>

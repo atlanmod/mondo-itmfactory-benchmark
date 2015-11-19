@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<anomalies:ParameterName xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org" description="parameter name File does not follow the format ^[a-z][a-zA-Z0-9]*$ for parameter names">
+  <trace href="../input/test_parametername_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.2/@bodyDeclarations.7/@parameters.0"/>
+</anomalies:ParameterName>

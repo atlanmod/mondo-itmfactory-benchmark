@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<anomalies:LocalVariableName xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org" description="non-final variable Xx does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-final variables">
+  <trace href="../input/test_localvariablename_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.4/@bodyDeclarations.11/@body/@statements.0/@fragments.0"/>
+</anomalies:LocalVariableName>

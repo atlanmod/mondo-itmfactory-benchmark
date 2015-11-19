@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org">
+  <anomalies:SignatureDeclareThrowsException description="the method start throws generic exceptions.">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.0/@bodyDeclarations.8"/>
+  </anomalies:SignatureDeclareThrowsException>
+  <anomalies:SignatureDeclareThrowsException description="the method stop throws generic exceptions.">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.0/@bodyDeclarations.9"/>
+  </anomalies:SignatureDeclareThrowsException>
+</xmi:XMI>

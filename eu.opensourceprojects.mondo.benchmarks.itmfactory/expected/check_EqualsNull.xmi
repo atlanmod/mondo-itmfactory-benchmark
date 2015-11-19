@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<anomalies:EqualsNull xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org" description="tests for null should not use the equals() method, check method IdeMessagerImpl">
+  <trace href="../input/test_equalsnull_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.1/@bodyDeclarations.2/@body/@statements.3/@expression"/>
+</anomalies:EqualsNull>

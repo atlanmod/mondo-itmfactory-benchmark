@@ -1,0 +1,48 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module UnconditionalIfStatement;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context JAVA!Expression def : isNegationOfBooleanLiteral : Boolean =
+	if self.oclIsTypeOf(JAVA!PrefixExpression) then
+		if self.operator.toString() = '!' then
+			self.operand.oclIsTypeOf(JAVA!BooleanLiteral)
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+helper context JAVA!IfStatement def : checkUnconditionalIfStatement : Boolean =
+	self.expression.oclIsTypeOf(JAVA!BooleanLiteral) or self.expression.isNegationOfBooleanLiteral;
+
+rule IfStatement {
+	from
+		s: JAVA!IfStatement (s.checkUnconditionalIfStatement)
+	to
+		t: CHK!UnconditionalIfStatement (
+			description <- 'do not use "if" statements whose conditionals are always true or always false, check method ' + s.getAbstractMethodDeclaration.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org">
+  <anomalies:UnconditionalIfStatement description="do not use &quot;if&quot; statements whose conditionals are always true or always false, check method printMessage">
+    <trace href="../input/test_unconditionalifstatement_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.1/@bodyDeclarations.3/@body/@statements.1"/>
+  </anomalies:UnconditionalIfStatement>
+  <anomalies:UnconditionalIfStatement description="do not use &quot;if&quot; statements whose conditionals are always true or always false, check method printMessage">
+    <trace href="../input/test_unconditionalifstatement_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.1/@bodyDeclarations.3/@body/@statements.2"/>
+  </anomalies:UnconditionalIfStatement>
+  <anomalies:UnconditionalIfStatement description="do not use &quot;if&quot; statements whose conditionals are always true or always false, check method printMessage">
+    <trace href="../input/test_unconditionalifstatement_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.1/@bodyDeclarations.3/@body/@statements.3"/>
+  </anomalies:UnconditionalIfStatement>
+</xmi:XMI>

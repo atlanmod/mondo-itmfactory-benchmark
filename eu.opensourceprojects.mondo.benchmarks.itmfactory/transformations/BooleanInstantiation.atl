@@ -1,0 +1,28 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module BooleanInstantiation;
+create OUT : CHK from IN : JAVA;
+
+helper def : TYPE : String = 'Boolean';
+
+helper context JAVA!ClassInstanceCreation def : checkInstantiation : Boolean =
+	self.type.type.name = thisModule.TYPE;
+
+rule ClassInstanceCreation {
+	from
+		s: JAVA!ClassInstanceCreation (s.checkInstantiation)
+	to
+		t : CHK!IntegerInstantiation (
+			description <- 'calling new ' + thisModule.TYPE + '() causes memory allocation'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

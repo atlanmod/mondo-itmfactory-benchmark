@@ -1,0 +1,90 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module VisibilityModifier;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^serialVersionUID$';
+helper def : protectedAllowed : Boolean = false;
+
+helper context OclAny def : isInFieldDeclaration : Boolean =
+	if self.oclIsTypeOf(JAVA!FieldDeclaration) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInFieldDeclaration
+		endif
+	endif;
+
+helper context OclAny def : getFieldDeclaration : JAVA!FieldDeclaration =
+	if self.oclIsTypeOf(JAVA!FieldDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getFieldDeclaration
+		endif
+	endif;
+
+helper context JAVA!Modifier def : isFinal : Boolean =
+	if not self.inheritance.oclIsUndefined() then
+		self.inheritance.toString() = 'final'
+	else
+		false
+	endif;
+
+helper context JAVA!Modifier def : isStatic : Boolean =
+	self.static;
+
+helper context JAVA!Modifier def : isPublic : Boolean =
+	if not self.visibility.oclIsUndefined() then
+		self.visibility.toString() = 'public'
+	else
+		false
+	endif;
+
+helper context JAVA!FieldDeclaration def : isFinal : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		self.modifier.isFinal
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclaration def : checkVisibilityModifier : Boolean =
+	let fd : JAVA!FieldDeclaration = self.getFieldDeclaration in
+	if fd.oclIsUndefined() then
+		true
+	else
+		if fd.modifier.oclIsUndefined() then
+			true
+		else
+			if fd.modifier.isPublic then
+				fd.modifier.isFinal or fd.modifier.isStatic or self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+			else
+				true
+			endif
+		endif
+	endif;
+
+rule FieldDeclaration {
+	from
+		s: JAVA!VariableDeclaration (s.isInFieldDeclaration and not s.checkVisibilityModifier)
+	to
+		t: CHK!VisibilityModifier (
+			description <- s.name + ' should not be public (only static final or immutable members may be public)'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+
+

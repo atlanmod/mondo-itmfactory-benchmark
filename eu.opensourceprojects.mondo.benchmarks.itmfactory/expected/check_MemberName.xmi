@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org">
+  <anomalies:MemberName description="non-static field _manager does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.1/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _env does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.1/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _javaProject does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.2/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _cuLocator does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.2/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _processorFactories does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.2/@bodyDeclarations.2/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _processorIter does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.2/@bodyDeclarations.3/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _dispatchManager does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.4/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _javaProject does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.4/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _aptProject does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.4/@bodyDeclarations.2/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _env does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.0/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _name does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.0/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _parentFiles does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.0/@bodyDeclarations.2/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _closed does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.0/@bodyDeclarations.3/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _env does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.1/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _file does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.1/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _parentFiles does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.1/@bodyDeclarations.2/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _env does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.2/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _env does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.3/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _file does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.3/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _parentFiles does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.3/@bodyDeclarations.2/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _env does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.5/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _name does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.5/@bodyDeclarations.1/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _parentFiles does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.5/@bodyDeclarations.2/@fragments.0"/>
+  </anomalies:MemberName>
+  <anomalies:MemberName description="non-static field _file does not follow the format ^[a-z][a-zA-Z0-9]*$ for non-static fields">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.6/@bodyDeclarations.0/@fragments.0"/>
+  </anomalies:MemberName>
+</xmi:XMI>

@@ -1,0 +1,26 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module SignatureDeclareThrowsException;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!AbstractMethodDeclaration def : checkSignatureDeclareThrowsException : Boolean =
+	self.thrownExceptions->exists(te | te.type.name = 'Exception');
+
+rule AbstractMethodDeclaration {
+	from
+		s: JAVA!AbstractMethodDeclaration (s.checkSignatureDeclareThrowsException and not s.proxy)
+	to
+		t: CHK!SignatureDeclareThrowsException (
+			description <- 'the method ' + s.name + ' throws generic exceptions.'
+		)
+	do {
+		t.trace <- Sequence{s};
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

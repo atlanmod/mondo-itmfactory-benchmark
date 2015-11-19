@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org">
+  <anomalies:AbbreviationAsWordInName description="abstract class IdeProcessingEnvImpl does not follow the format ^Abstract.+$ for abstract classes">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.4"/>
+  </anomalies:AbbreviationAsWordInName>
+  <anomalies:AbbreviationAsWordInName description="abstract class IdeOutputFileObject does not follow the format ^Abstract.+$ for abstract classes">
+    <trace href="../input/org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.1/@ownedElements.4"/>
+  </anomalies:AbbreviationAsWordInName>
+</xmi:XMI>

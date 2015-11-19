@@ -1,0 +1,73 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module CompareObjectWithEquals;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context OclAny def : getType : JAVA!Type =
+	if self.oclIsTypeOf(JAVA!SingleVariableDeclaration) then
+		if not self.type.oclIsUndefined() then
+			self.type.type
+		else
+			OclUndefined
+		endif
+	else
+		if self.oclIsKindOf(JAVA!AbstractVariablesContainer) then
+			if not self.type.oclIsUndefined() then
+				self.type.type
+			else
+				OclUndefined
+			endif
+		else
+			if self.oclIsTypeOf(JAVA!Model) then
+				OclUndefined
+			else
+				self.refImmediateComposite().getType
+			endif
+		endif
+	endif;
+	
+
+helper context JAVA!InfixExpression def : checkCompareObjectWithEquals : Boolean =
+	if self.rightOperand.oclIsTypeOf(JAVA!SingleVariableAccess) and self.leftOperand.oclIsTypeOf(JAVA!SingleVariableAccess) then
+		let typeRight : JAVA!Type = self.rightOperand.variable.getType in
+		let typeLeft : JAVA!Type = self.leftOperand.variable.getType in
+		if not typeRight.oclIsUndefined() and not typeLeft.oclIsUndefined() and 
+			not typeRight.oclIsKindOf(JAVA!PrimitiveType) and not typeLeft.oclIsKindOf(JAVA!PrimitiveType) then
+			self.operator.toString() = '==' 
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+rule InfixExpression {
+	from
+		s: JAVA!InfixExpression (s.checkCompareObjectWithEquals)
+	to
+		t: CHK!CompareObjectsWithEquals (
+			description <- 'use equals() to compare object references, check method ' + s.getAbstractMethodDeclaration.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

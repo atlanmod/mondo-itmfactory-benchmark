@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<anomalies:ConstantName xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org" description="constant (enum or static and final) field xxx does not follow the format ^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$ for constants">
+  <trace href="../input/test_constantname_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedPackages.0/@ownedElements.0/@bodyDeclarations.2/@fragments.0"/>
+</anomalies:ConstantName>

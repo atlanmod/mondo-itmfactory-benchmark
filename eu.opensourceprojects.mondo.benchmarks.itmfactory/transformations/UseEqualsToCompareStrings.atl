@@ -1,0 +1,84 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module UseEqualsToCompareStrings;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context OclAny def : hasStringType : Boolean =
+	if self.oclIsTypeOf(JAVA!SingleVariableDeclaration) then
+		if not self.type.oclIsUndefined() then
+			self.type.type.name = 'String'
+		else
+			false
+		endif
+	else
+		if self.oclIsKindOf(JAVA!AbstractVariablesContainer) then
+			if not self.type.oclIsUndefined() then
+				self.type.type.name = 'String'
+			else
+				false
+			endif
+		else
+			if self.oclIsTypeOf(JAVA!Model) then
+				false
+			else
+				self.refImmediateComposite().hasStringType
+			endif
+		endif
+	endif;
+
+helper context JAVA!InfixExpression def : checkUseEqualsToCompareStrings : Boolean =
+	if self.rightOperand.oclIsTypeOf(JAVA!SingleVariableAccess) and self.leftOperand.oclIsTypeOf(JAVA!SingleVariableAccess) then
+		if self.rightOperand.variable.hasStringType and not self.leftOperand.variable.hasStringType then 
+			self.operator.toString() = '==' 
+		else
+			false
+		endif
+	else
+		if self.rightOperand.oclIsTypeOf(JAVA!SingleVariableAccess) and self.leftOperand.oclIsTypeOf(JAVA!StringLiteral) then
+			if self.rightOperand.variable.hasStringType then
+				self.operator.toString() = '==' 
+			else
+				false
+			endif
+		else
+			if self.leftOperand.oclIsTypeOf(JAVA!SingleVariableAccess) and self.rightOperand.oclIsTypeOf(JAVA!StringLiteral) then
+				if self.leftOperand.variable.hasStringType then
+					self.operator.toString() = '==' 
+				else
+					false
+				endif
+			else
+				false
+			endif
+		endif
+	endif;
+
+rule InfixExpression {
+	from
+		s: JAVA!InfixExpression (s.checkUseEqualsToCompareStrings)
+	to
+		t: CHK!CompareObjectsWithEquals (
+			description <- 'use equals() to compare strings, check method ' + s.getAbstractMethodDeclaration.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

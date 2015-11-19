@@ -1,0 +1,70 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module LooseCoupling;
+create OUT : CHK from IN : JAVA;
+
+helper def : ImplementationTypes : Sequence(String) = 
+	Sequence{'ArrayList', 'HashSet'};
+	
+helper context OclAny def : getTypeAccess : JAVA!TypeAccess =
+	if self.oclIsTypeOf(JAVA!SingleVariableDeclaration) then
+		self.type
+	else
+		if self.oclIsKindOf(JAVA!AbstractVariablesContainer) then
+			self.type
+		else
+			if self.oclIsTypeOf(JAVA!Model) then
+				OclUndefined
+			else
+				self.refImmediateComposite().getTypeAccess
+			endif
+		endif
+	endif;
+
+helper context JAVA!MethodDeclaration def : checkLooseCoupling : Boolean =
+	if self.returnType.oclIsUndefined() then
+		false
+	else
+		thisModule.ImplementationTypes->includes(self.returnType.type.name)
+	endif;
+
+helper context JAVA!VariableDeclaration def : checkLooseCoupling : Boolean =
+	let typeAccess : JAVA!TypeAccess = self.getTypeAccess in
+	if typeAccess.oclIsUndefined() then
+		false
+	else
+		thisModule.ImplementationTypes->includes(self.getTypeAccess.type.name)
+	endif;
+
+rule FieldDeclaration {
+	from
+		s: JAVA!VariableDeclaration (s.checkLooseCoupling and not s.proxy)
+	to
+		t: CHK!LooseCoupling (
+			description <- 'variable ' + s.name + ' uses implementation types instead of interface types'
+		)
+	do {
+		t.trace <- Sequence{s};
+	}
+}
+
+rule MethodDeclaration {
+	from
+		s: JAVA!MethodDeclaration (s.checkLooseCoupling and not s.proxy)
+	to
+		t: CHK!LooseCoupling (
+			description <- 'method ' + s.name + ' uses implementation types instead of interface types'
+		)
+	do {
+		t.trace <- Sequence{s};
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+
+

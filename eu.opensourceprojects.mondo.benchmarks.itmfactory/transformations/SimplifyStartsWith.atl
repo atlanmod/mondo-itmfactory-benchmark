@@ -1,0 +1,49 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module SimplifyStartsWith;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def: getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context JAVA!MethodInvocation def : checkSimplifyStartsWith : Boolean =
+	if self.method.name = 'startsWith' then
+		if self.arguments->size() = 1 then
+			if self.arguments->first().oclIsTypeOf(JAVA!StringLiteral) then
+				self.arguments->first().escapedValue.regexReplaceAll('\"', '')->size() = 1
+			else
+				false
+			endif
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+rule SimplifyStartsWith {
+	from
+		s: JAVA!MethodInvocation (s.checkSimplifyStartsWith)
+	to
+		t: CHK!SimplifyStartsWith (
+			description <- 'startsWith can be rewritten using (string).charAt(0), check method ' + s.getAbstractMethodDeclaration.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

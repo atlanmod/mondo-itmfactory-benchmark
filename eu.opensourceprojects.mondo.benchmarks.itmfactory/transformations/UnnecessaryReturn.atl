@@ -1,0 +1,31 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module UnnecessaryReturn;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!MethodDeclaration def: checkUnnecessaryReturn : Boolean =
+	if self.body.oclIsUndefined() then
+		false
+	else
+		self.body.statements->select(stat | stat.oclIsTypeOf(JAVA!ReturnStatement))
+							->exists(ret | ret.expression.oclIsUndefined())
+	endif;
+
+rule MethodDeclaration {
+	from
+		s: JAVA!MethodDeclaration (s.checkUnnecessaryReturn)
+	to
+		t: CHK!UnnecessaryReturn (
+			description <- 'avoid the use of unnecessary return statements, check the method ' + s.name
+		)
+	do {
+		t.trace <- Sequence{s};
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

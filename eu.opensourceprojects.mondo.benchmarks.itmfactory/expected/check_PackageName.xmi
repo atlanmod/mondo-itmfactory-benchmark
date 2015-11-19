@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anomalies="http://atlanmod.checkstyles.org">
+  <anomalies:PackageName description="package name Com does not follow the format for package names">
+    <trace href="../input/test_packagename_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0"/>
+  </anomalies:PackageName>
+  <anomalies:PackageName description="package name Com.exp does not follow the format for package names">
+    <trace href="../input/test_packagename_org.eclipse.jdt.apt.pluggable.core_java.xmi#//@ownedElements.0/@ownedPackages.0"/>
+  </anomalies:PackageName>
+</xmi:XMI>

@@ -32,4 +32,22 @@
   <eClassifiers xsi:type="ecore:EClass" name="SimplifyBooleanReturn" eSuperTypes="#//Anomaly"/>
   <eClassifiers xsi:type="ecore:EClass" name="FinalClass" eSuperTypes="#//Anomaly"/>
   <eClassifiers xsi:type="ecore:EClass" name="InterfaceIsType" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VisibilityModifier" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LooseCoupling" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SignatureDeclareThrowsException" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DefaultLabelNotLastInSwitchStmt" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EqualsNull" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CompareObjectsWithEquals" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PositionLiteralsFirstInComparisons"
+      eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UseEqualsToCompareStrings" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="IntegerInstantiation" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ByteInstantiation" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LongInstantiation" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BooleanInstantiation" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ShortInstantiation" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SimplifyStartsWith" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UnnecessaryReturn" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UnconditionalIfStatement" eSuperTypes="#//Anomaly"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UnnecessaryFinalModifier" eSuperTypes="#//Anomaly"/>
 </ecore:EPackage>
