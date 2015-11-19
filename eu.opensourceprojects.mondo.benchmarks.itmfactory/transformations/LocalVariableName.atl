@@ -1,0 +1,108 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module LocalVariableName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^[a-z][a-zA-Z0-9]*$';
+helper def : allowOneCharVarInForLoop : Boolean = true;
+
+helper context JAVA!Modifier def : isFinal : Boolean =
+	if not self.inheritance.oclIsUndefined() then
+		self.inheritance.toString() = 'final'
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclarationStatement def : isFinal : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		self.modifier.isFinal
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclarationExpression def : isFinal : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		self.modifier.isFinal
+	else
+		false
+	endif;
+
+
+helper context OclAny def : isIn(oclType: OclAny) : Boolean =
+	if self.oclIsTypeOf(oclType) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isIn(oclType)
+		endif
+	endif;
+
+helper context OclAny def : get(oclType: OclAny) : Boolean =
+	if self.oclIsTypeOf(oclType) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().get(oclType)
+		endif
+	endif;
+
+
+
+helper context JAVA!VariableDeclaration def : checkLocalVariableName : Boolean =
+	if self.isIn(JAVA!VariableDeclarationStatement) then
+		let container : JAVA!VariableDeclarationStatement = self.get(JAVA!VariableDeclarationStatement) in
+		if not container.isFinal then
+			self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+		else
+			true
+		endif
+	else
+		if self.isIn(JAVA!VariableDeclarationExpression) then
+			let container : JAVA!VariableDeclarationExpression = self.get(JAVA!VariableDeclarationExpression) in
+			if not container.isFinal then
+				self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+				and
+				if thisModule.allowOneCharVarInForLoop then
+					self.name.size() >= 1
+				else
+					self.name.size() > 1
+				endif
+			else
+				true
+			endif
+		else
+			true
+		endif
+	endif;
+
+
+helper context JAVA!VariableDeclarationExpression def : checkLocalVariableName : Boolean =
+	if not self.isFinal and not self.isStatic then
+		self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+	else
+		true
+	endif;
+
+
+rule LocalVariableName {
+	from
+		s: JAVA!VariableDeclaration (not s.proxy and not s.checkLocalVariableName)
+	to
+		t: CHK!LocalVariableName (
+			description <- 'non-final variable ' + s.name + ' does not follow the format ' + thisModule.FORMAT + ' for non-final variables'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

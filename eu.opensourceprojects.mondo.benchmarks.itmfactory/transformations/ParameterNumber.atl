@@ -1,0 +1,37 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module ParameterNumber;
+create OUT : CHK from IN : JAVA;
+
+helper def : Max : Integer = 7;
+helper def : ignoreOverriddenMethods : Boolean = true;
+
+helper context JAVA!AbstractMethodDeclaration def : isOverriden : Boolean =
+	self.annotations->exists(a | a.type.type.name = 'Override');
+
+helper context JAVA!AbstractMethodDeclaration def : checkParameterNumber : Boolean =
+	if thisModule.ignoreOverriddenMethods then 
+		self.parameters->size() > thisModule.Max and not self.isOverriden
+   	else
+   		self.parameters->size() > thisModule.Max
+	endif;
+
+rule AbstractMethodDeclaration {
+	from
+		s: JAVA!AbstractMethodDeclaration (not s.proxy and s.checkParameterNumber)
+	to
+		t: CHK!ParameterNumber (
+			description <- 'the method ' + s.name + ' has ' + s.parameters->size() + ' parameters, while the max is ' + thisModule.Max
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

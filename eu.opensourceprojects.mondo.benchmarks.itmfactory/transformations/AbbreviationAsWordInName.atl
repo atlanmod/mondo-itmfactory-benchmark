@@ -1,0 +1,130 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module AbbreviationAsWordInName;
+create OUT : CHK from IN : JAVA;
+
+helper def : ALLOWED_CAPITAL_LETTERS : Integer = 3;
+
+helper def : repeatCapitalLetter(current : Integer, output : String) : String =
+	if current = 0 then
+		output->concat('[A-Z]')
+	else
+		thisModule.repeatCapitalLetter(current-1, output->concat('[A-Z]'))
+	endif;
+
+helper context OclAny def : getContainer : OclAny =
+	if self.oclIsKindOf(JAVA!AbstractVariablesContainer) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!FieldDeclaration) then
+			self
+		else
+			if self.oclIsTypeOf(JAVA!Model) then
+				OclUndefined
+			else
+				self.refImmediateComposite().getContainer
+			endif
+		endif
+	endif;
+
+helper context JAVA!Modifier def : isStatic : Boolean =
+	self.static;
+
+helper context JAVA!Modifier def : isFinal : Boolean =
+	if not self.inheritance.oclIsUndefined() then
+		self.inheritance.toString() = 'final'
+	else
+		false
+	endif;
+
+helper context JAVA!BodyDeclaration def : checkAbbreviation : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		if self.modifier.isStatic or self.modifier.isFinal then
+			true
+		else
+			self.name.regexReplaceAll('.*' + thisModule.repeatCapitalLetter(thisModule.ALLOWED_CAPITAL_LETTERS, '') + '.*', '@').toSequence().count('@') < 1
+		endif
+	else
+		self.name.regexReplaceAll('.*' + thisModule.repeatCapitalLetter(thisModule.ALLOWED_CAPITAL_LETTERS, '') + '.*', '@').toSequence().count('@') < 1
+	endif;
+
+helper context JAVA!VariableDeclaration def : isStatic : Boolean =
+	let container : OclAny = 
+							if self.oclIsTypeOf(JAVA!SingleVariableDeclaration) then 
+								self 
+							else 
+								self.getContainer 
+							endif in
+	if not container.oclIsUndefined() then
+		if not container.modifier.oclIsUndefined() then
+			container.modifier.static		
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclaration def : isFinal : Boolean =
+	let container : JAVA!AbstractVariablesContainer = self.getContainer in
+	if not container.oclIsUndefined() then
+		if not container.modifier.oclIsUndefined() then
+			container.modifier.isFinal
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclaration def : checkAbbreviation : Boolean =
+	if self.isStatic or self.isFinal or self.oclIsTypeOf(JAVA!EnumConstantDeclaration) then
+		true
+	else
+		self.name.regexReplaceAll('.*' + thisModule.repeatCapitalLetter(thisModule.ALLOWED_CAPITAL_LETTERS, '') + '.*', '@').toSequence().count('@') < 1
+	endif;
+
+--RULES
+rule allowedAbbreviationTypeDeclaration {
+	from
+		s: JAVA!TypeDeclaration (not s.proxy and not s.checkAbbreviation)
+	to
+		t: CHK!AbbreviationAsWordInName (
+			description <- 'more than ' + thisModule.ALLOWED_CAPITAL_LETTERS + ' capital letter in class/interface name ' + s.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule allowedAbbreviationAbstractMethodDeclaration {
+	from
+		s: JAVA!AbstractMethodDeclaration (not s.proxy and not s.checkAbbreviation)
+	to
+		t: CHK!AbbreviationAsWordInName (
+			description <- 'more than ' + thisModule.ALLOWED_CAPITAL_LETTERS + ' capital letter in method name ' + s.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule allowedAbbreviationVariableDeclaration {
+	from
+		s: JAVA!VariableDeclaration (not s.proxy and not s.checkAbbreviation)
+	to
+		t: CHK!AbbreviationAsWordInName (
+			description <- 'more than ' + thisModule.ALLOWED_CAPITAL_LETTERS + ' capital letter in variable name ' + s.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

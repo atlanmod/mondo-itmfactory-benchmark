@@ -1,0 +1,44 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module MethodName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^[a-z][a-zA-Z0-9]*$';
+helper def : allowClassName : Boolean = true;
+
+helper context OclAny def : getTypeDeclaration : OclAny =
+	if self.oclIsKindOf(JAVA!TypeDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getTypeDeclaration
+		endif
+	endif;
+
+helper context JAVA!AbstractMethodDeclaration def : checkMethodName : Boolean =
+	if self.oclIsTypeOf(JAVA!ConstructorDeclaration) then
+		true
+	else
+		if thisModule.allowClassName then
+			self.name = self.getTypeDeclaration.name or self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+		else
+			self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+		endif
+	endif;
+
+
+rule MethodName {
+	from
+		s: JAVA!AbstractMethodDeclaration (not s.proxy and not s.checkMethodName)
+	to
+		t: CHK!AbbreviationAsWordInName (
+			description <- 'method name ' + s.name + ' does not follow the format for method names'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+} 
+

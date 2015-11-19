@@ -1,0 +1,31 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module TypeName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^[A-Z][a-zA-Z0-9]*$';
+
+helper context JAVA!AbstractTypeDeclaration def : checkTypeName : Boolean =
+	self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1;
+	
+
+rule AbstractTypeDeclaration {
+	from
+		s: JAVA!AbstractTypeDeclaration (not s.proxy and not s.checkTypeName)
+	to
+		t: CHK!TypeName (
+			description <- 'identifier for ' + s.name + ' does not follow the format ' + thisModule.FORMAT + ' for identifiers for classes, interfaces, enums, and annotations'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

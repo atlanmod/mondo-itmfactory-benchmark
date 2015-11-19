@@ -1,0 +1,43 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module AbstractClassName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^Abstract.+$';
+
+helper context JAVA!BodyDeclaration def : isAbstract : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		if not self.modifier.inheritance.oclIsUndefined() then
+			self.modifier.inheritance.toString() = 'abstract'
+		else
+			false
+		endif
+	else
+		false
+	endif;
+
+helper context JAVA!ClassDeclaration def : checkAbstractClassName : Boolean =
+	if self.isAbstract then
+		self.name.debug('a').regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+	else
+		true
+	endif;
+	
+rule abstractClassName {
+	from
+		s: JAVA!ClassDeclaration (not s.proxy and not s.checkAbstractClassName)
+	to
+		t: CHK!AbstractClassName (
+			description <- 'abstract class ' + s.name + ' does not follow the format ' + thisModule.FORMAT + ' for abstract classes'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

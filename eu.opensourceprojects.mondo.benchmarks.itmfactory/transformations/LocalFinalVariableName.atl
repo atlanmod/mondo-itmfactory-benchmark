@@ -1,0 +1,85 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module LocalFinalVariableName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^[a-z][a-zA-Z0-9]*$';
+
+helper context JAVA!Modifier def : isFinal : Boolean =
+	if not self.inheritance.oclIsUndefined() then
+		self.inheritance.toString() = 'final'
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclarationStatement def : isStatic : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		self.modifier.static		
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclarationStatement def : isFinal : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		self.modifier.isFinal
+	else
+		false
+	endif;
+
+
+helper context OclAny def : isInVariableDeclarationStatement : Boolean =
+	if self.oclIsTypeOf(JAVA!VariableDeclarationStatement) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInVariableDeclarationStatement
+		endif
+	endif;
+
+helper context OclAny def : getVariableDeclarationStatement : Boolean =
+	if self.oclIsTypeOf(JAVA!VariableDeclarationStatement) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getVariableDeclarationStatement
+		endif
+	endif;
+
+
+
+helper context JAVA!VariableDeclaration def : checkLocalFinalVariableName : Boolean =
+	if self.isInVariableDeclarationStatement then
+		let container : JAVA!VariableDeclarationStatement = self.getVariableDeclarationStatement in
+		if container.isFinal and not container.isStatic then
+			self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1
+		else
+			true
+		endif
+	else
+		true
+	endif;
+
+
+rule LocalFinalVariableName {
+	from
+		s: JAVA!VariableDeclaration (not s.proxy and not s.checkLocalFinalVariableName)
+	to
+		t: CHK!LocalFinalVariableName (
+			description <- 'final variable ' + s.name + ' does not follow the format ' + thisModule.FORMAT + ' for final variables'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

@@ -1,0 +1,54 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module RedundantImport;
+create OUT : CHK from IN : JAVA;
+
+
+helper context OclAny def : getCompilationUnit : JAVA!CompilationUnit =
+	if self.oclIsTypeOf(JAVA!CompilationUnit) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getCompilationUnit
+		endif
+	endif;
+
+
+helper def : checkRedundancy(s1 : JAVA!ImportDeclaration, s2 : JAVA!ImportDeclaration) : Boolean =
+	let import1 : String = s1.importedElement.getFullImport('') in
+	let import2 : String = s2.importedElement.getFullImport('') in
+	if s1.getCompilationUnit = s2.getCompilationUnit then
+		import1.startsWith(import2) or import2.startsWith(import1)
+	else
+		false
+	endif;
+
+helper context OclAny def : getFullImport(output : String) : String =
+	if self.oclIsUndefined() or self.oclIsTypeOf(JAVA!Model) then
+		output + ';'
+	else
+		self.refImmediateComposite().getFullImport(if output = '' then self.name else self.name + '.' + output endif)
+	endif;
+
+rule Redundantmport {
+	from
+		s1: JAVA!ImportDeclaration, s2: JAVA!ImportDeclaration (s1 <> s2 and thisModule.checkRedundancy(s1, s2))
+	to
+		t: CHK!RedundantImport (
+			description <- 'the import declarations ' + s1.importedElement.getFullImport('') + ' ' + s2.importedElement.getFullImport('') + ' are redundant'
+		)
+	do {
+		t.trace <- Sequence{s1, s2};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+
+

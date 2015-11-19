@@ -1,0 +1,68 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module MemberName;
+create OUT : CHK from IN : JAVA;
+
+helper def : CONSTANT_NAME : String = '^[a-z][a-zA-Z0-9]*$';
+
+helper context OclAny def : getFieldDeclaration : OclAny =
+	if self.oclIsTypeOf(JAVA!FieldDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getFieldDeclaration
+		endif
+	endif;
+
+helper context OclAny def : isInFieldDeclaration : Boolean =
+	if self.oclIsTypeOf(JAVA!FieldDeclaration) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInFieldDeclaration
+		endif
+	endif;
+
+helper context JAVA!FieldDeclaration def : isStatic : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		self.modifier.static		
+	else
+		false
+	endif;
+
+helper context JAVA!VariableDeclaration def : checkMemberName : Boolean =
+	if self.isInFieldDeclaration then
+		let container : JAVA!FieldDeclaration = self.getFieldDeclaration in
+		if not container.isStatic then
+			self.name.regexReplaceAll(thisModule.CONSTANT_NAME, '@').toSequence().count('@') >= 1
+		else
+			true
+		endif
+	else
+		true
+	endif;
+
+rule ConstantName {
+	from
+		s: JAVA!VariableDeclaration (not s.proxy and not s.checkMemberName)
+	to
+		t: CHK!MemberName (
+			description <- 'non-static field ' + s.name + ' does not follow the format ' + thisModule.CONSTANT_NAME + ' for non-static fields'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

@@ -1,0 +1,26 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module AvoidEscapedUnicodeCharacters;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!StringLiteral def : checkUnicodeCharacters : Boolean =
+	self.escapedValue.regexReplaceAll('.*[^\\x20-\\x7E].*', '@').toSequence().count('@') = 0;
+
+rule AvoidEscapedUnicodeCharacters {
+	from
+		s: JAVA!StringLiteral (not s.checkUnicodeCharacters)
+	to
+		t: CHK!AvoidEscapedUnicodeCharacters (
+			description <- 'string literal ' + s.escapedValue + ' contains unicode escapes '
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

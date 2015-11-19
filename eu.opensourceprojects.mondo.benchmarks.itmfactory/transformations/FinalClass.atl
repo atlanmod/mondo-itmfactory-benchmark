@@ -1,0 +1,61 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module FinalClass;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : isInInterface : Boolean =
+	if self.oclIsTypeOf(JAVA!InterfaceDeclaration) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInInterface
+		endif
+	endif;
+
+helper context JAVA!ConstructorDeclaration def : isPrivate : Boolean =
+	if not self.modifier.oclIsUndefined() then
+		if self.modifier.visibility.oclIsUndefined() then
+			false
+		else
+			self.modifier.visibility.toString() = 'private'
+		endif
+	else
+		false
+	endif;
+
+helper context JAVA!ClassDeclaration def : checkFinalClass : Boolean =
+	let constructors : Sequence(JAVA!ConstructorDeclaration) = self.bodyDeclarations->select(bd | bd.oclIsTypeOf(JAVA!ConstructorDeclaration)) in
+	if constructors->notEmpty() and constructors->forAll(cd | cd.isPrivate) then
+		if self.modifier.oclIsUndefined() then
+			true
+		else
+			if not self.modifier.inheritance.oclIsUndefined() then
+				self.modifier.inheritance.toString() = 'final'
+			else
+				true
+			endif
+		endif
+	else
+		true
+	endif;
+
+rule FinalClass {
+	from
+		s: JAVA!ClassDeclaration (not s.isInInterface and not s.checkFinalClass)
+	to
+		t: CHK!FinalClass (
+			description <- 'the class ' + s.name + ' should be declared final'	
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

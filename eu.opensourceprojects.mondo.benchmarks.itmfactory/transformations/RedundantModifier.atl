@@ -1,0 +1,211 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module RedundantModifier;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!Modifier def : checkIsAbstract : Boolean =
+	if self.inheritance.oclIsUndefined() then
+		false
+	else
+		self.inheritance.toString() = 'abstract'
+	endif;
+
+helper context JAVA!Modifier def : checkIsFinal : Boolean =
+	if self.inheritance.oclIsUndefined() then
+		false
+	else
+		self.inheritance.toString() = 'final'
+	endif;
+
+helper context JAVA!Modifier def : checkIsStatic : Boolean =
+	if self.static.oclIsUndefined() then
+		false
+	else
+		self.static
+	endif;
+
+helper context JAVA!Modifier def : checkIsPublic : Boolean =
+	if self.visibility.oclIsUndefined() then
+		false
+	else
+		self.visibility.toString() = 'public'
+	endif;
+
+helper context JAVA!Modifier def : checkIsProtected : Boolean =
+	if self.visibility.oclIsUndefined() then
+		false
+	else
+		self.visibility.toString() = 'protected'
+	endif;
+
+helper context JAVA!InterfaceDeclaration def : hasRedundantModifier : Boolean =
+	if self.modifier.oclIsUndefined() then
+		false
+	else
+		self.modifier.checkIsAbstract
+	endif;
+
+helper context OclAny def : isInsideInterface : Boolean =
+	if self.oclIsTypeOf(JAVA!InterfaceDeclaration) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInsideInterface
+		endif
+	endif;
+
+helper context OclAny def : isInsideFinalClass : Boolean =
+	if self.oclIsTypeOf(JAVA!ClassDeclaration) then
+		if self.modifier.oclIsUndefined() then
+			false
+		else
+			self.modifier.checkIsFinal
+		endif
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInsideFinalClass
+		endif
+	endif;
+
+helper context OclAny def : isInsideNonPublicNonProtectedClass : Boolean =
+	if self.oclIsTypeOf(JAVA!ClassDeclaration) then
+		if self.modifier.oclIsUndefined() then
+			false
+		else
+			not self.modifier.checkIsPublic and not self.modifier.checkIsProtected
+		endif
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInsideNonPublicNonProtectedClass
+		endif
+	endif;
+
+helper context JAVA!ClassDeclaration def : hasRedundantModifier : Boolean =
+	if self.modifier.oclIsUndefined() then
+		false
+	else
+		self.modifier.checkIsStatic or self.modifier.checkIsPublic
+	endif;
+
+helper context JAVA!FieldDeclaration def : hasRedundantModifier : Boolean =
+	if self.modifier.oclIsUndefined() then
+		false
+	else
+		self.modifier.checkIsPublic or self.modifier.checkIsFinal or self.modifier.checkIsStatic
+	endif;
+
+helper context JAVA!EnumDeclaration def : hasRedundantModifier : Boolean =
+	if self.isInsideInterface then
+		if self.modifier.oclIsUndefined() then
+			false
+		else
+			self.modifier.checkIsStatic or self.modifier.checkIsPublic
+		endif
+	else
+		if self.modifier.oclIsUndefined() then
+			false
+		else
+			self.modifier.checkIsStatic
+		endif
+	endif;
+
+helper context JAVA!ConstructorDeclaration def : hasRedundantModifier : Boolean =
+	if self.modifier.oclIsUndefined() then
+		false
+	else
+		self.modifier.checkIsPublic
+	endif;
+
+helper context JAVA!MethodDeclaration def : hasRedundantModifier : Boolean =
+	if self.modifier.oclIsUndefined() then
+		false
+	else
+		self.modifier.checkIsFinal
+	endif;
+
+rule InterfaceDeclaration {
+	from
+		s: JAVA!InterfaceDeclaration (s.hasRedundantModifier)
+	to
+		t: CHK!RedundantModifier (
+			description <- 	'abstract on interface ' + s.name + ' is redundant'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule ClassDeclaration {
+	from
+		s: JAVA!ClassDeclaration (s.isInsideInterface and s.hasRedundantModifier)
+	to
+		t: CHK!RedundantModifier (
+			description <- 	'public and static modifier on class ' + s.name + ' are redundant'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule FieldDeclaration {
+	from
+		s: JAVA!FieldDeclaration (s.isInsideInterface and s.hasRedundantModifier)
+	to
+		t: CHK!RedundantModifier (
+			description <- 	'public, static and final modifier on field ' + s.name + ' are redundant'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule EnumDeclaration {
+	from
+		s: JAVA!EnumDeclaration (s.hasRedundantModifier)
+	to
+		t: CHK!RedundantModifier (
+			description <- 	'static modifier on enumeration ' + s.name + ' is redundant'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule MethodDeclaration {
+	from
+		s: JAVA!MethodDeclaration (s.isInsideFinalClass and s.hasRedundantModifier)
+	to
+		t: CHK!RedundantModifier (
+			description <- 'final modifier on method ' + s.name + ' is redundant'	
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+rule ConstructorDeclaration {
+	from
+		s: JAVA!ConstructorDeclaration (s.isInsideNonPublicNonProtectedClass and s.hasRedundantModifier)
+	to
+		t: CHK!RedundantModifier (
+			description <- 'public modifier on constructor ' + s.name + ' is redundant'	
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

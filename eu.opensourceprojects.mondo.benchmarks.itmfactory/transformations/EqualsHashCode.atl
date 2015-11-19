@@ -1,0 +1,31 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module EqualsHashCode;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!ClassDeclaration def : checkEqualsHashCode : Boolean =
+	let count : Integer = self.bodyDeclarations->select(bd | bd.oclIsTypeOf(JAVA!MethodDeclaration))
+							->select(md | md.name = 'hashCode' and md.parameters->isEmpty())->size() +
+						  self.bodyDeclarations->select(bd | bd.oclIsTypeOf(JAVA!MethodDeclaration))
+							->select(md | md.name = 'equals' and md.parameters->size() = 1)->size() in
+	count = 0 or count = 2;
+
+rule ClassDeclaration {
+	from
+		s: JAVA!ClassDeclaration (not s.checkEqualsHashCode)
+	to
+		t: CHK!EqualsHashCode (
+			description <- 'class ' + s.name + ' should override equals() and hashcode()'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

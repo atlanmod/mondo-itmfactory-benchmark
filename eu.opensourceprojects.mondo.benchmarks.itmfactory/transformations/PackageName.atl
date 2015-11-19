@@ -1,0 +1,45 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module PackageName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$';
+
+helper context OclAny def : isTopPackage : Boolean =
+	if self.refImmediateComposite().oclIsTypeOf(JAVA!Package) then
+		self.refImmediateComposite().isTopPackage
+	else
+		not self.refImmediateComposite().oclIsTypeOf(JAVA!Package)
+	endif;
+
+helper context OclAny def : getFullNamePackage(output: String) : JAVA!Package =
+	if self.oclIsUndefined() or self.oclIsTypeOf(JAVA!Model) then
+		output
+	else
+		self.refImmediateComposite().getFullNamePackage(if output = '' then self.name else self.name + '.' + output endif)
+	endif;
+
+helper context JAVA!Package def : checkPackageName : Boolean =
+	let fullName : String = self.getFullNamePackage('') in
+	fullName.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1;
+
+rule PackageName {
+	from
+		s: JAVA!Package (not s.proxy and s.isTopPackage and not s.checkPackageName)
+	to
+		t: CHK!PackageName (
+			description <- 'package name ' + s.getFullNamePackage('') + ' does not follow the format ' + thisModule.FORMAT + ' for package names'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+} 
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+
+

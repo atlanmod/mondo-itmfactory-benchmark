@@ -1,0 +1,51 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module ParameterName;
+create OUT : CHK from IN : JAVA;
+
+helper def : FORMAT : String = '^[a-z][a-zA-Z0-9]*$';
+helper def : ignoreOverridden : Boolean = true;
+
+
+helper context JAVA!SingleVariableDeclaration def : checkParameterName : Boolean =
+	self.name.regexReplaceAll(thisModule.FORMAT, '@').toSequence().count('@') >= 1;
+
+helper context OclAny def : getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context JAVA!AbstractMethodDeclaration def : isOverriden : Boolean =
+	self.annotations->exists(a | a.type.type.name = 'Override');
+
+
+rule ParameterName {
+	from
+		s: JAVA!SingleVariableDeclaration (
+											not s.getAbstractMethodDeclaration.proxy and 
+			                               	if thisModule.ignoreOverridden then 
+												not s.checkParameterName and not s.getAbstractMethodDeclaration.isOverriden
+										   	else
+										   		not s.checkParameterName
+											endif)
+	to
+		t: CHK!ParameterName (
+			description <- 'parameter name ' + s.name + ' does not follow the format ' + thisModule.FORMAT + ' for parameter names'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+} 
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

@@ -1,0 +1,38 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module AvoidStarImport;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!Package def : isContainedInOtherPackage: Boolean =
+	self.refImmediateComposite().oclIsTypeOf(JAVA!Package);
+
+--if the star is not used, the last element inside an import declaration should not be a package
+helper context JAVA!ImportDeclaration def : checkStarImport : Boolean =
+	not self.importedElement.oclIsTypeOf(JAVA!Package);
+
+helper context OclAny def : getFullImport(output : String) : String =
+	if self.oclIsUndefined() or self.oclIsTypeOf(JAVA!Model) then
+		output
+	else
+		self.refImmediateComposite().getFullImport(if output = '' then self.name else self.name + '.' + output endif)
+	endif;
+
+rule AvoidStarImport {
+	from
+		s: JAVA!ImportDeclaration (not s.checkStarImport)
+	to
+		t: CHK!AvoidStartImport (
+			description <- 'the import declaration ' + s.importedElement.getFullImport('') + '.*' + ' uses star'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+

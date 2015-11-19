@@ -1,0 +1,27 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module InterfaceIsType;
+create OUT : CHK from IN : JAVA;
+
+helper context JAVA!InterfaceDeclaration def : checkInterfaceIsType : Boolean =
+	self.bodyDeclarations->exists(bd | bd.oclIsTypeOf(JAVA!MethodDeclaration));
+
+rule InterfaceDeclaration {
+	from
+		s: JAVA!InterfaceDeclaration (not s.checkInterfaceIsType and not s.proxy)
+	to
+		t: CHK!InterfaceIsType (
+			description <- 'interface ' + s.name + ' should contain at least one method'
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

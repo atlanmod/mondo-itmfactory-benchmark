@@ -1,0 +1,15 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module ModifierOrder;
+create OUT : CHK from IN : JAVA;
+
+--not implemented
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
+
+

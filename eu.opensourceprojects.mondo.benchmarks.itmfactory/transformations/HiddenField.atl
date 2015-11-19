@@ -1,0 +1,71 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module HiddenField;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : isInFieldDeclaration : Boolean =
+	if self.oclIsTypeOf(JAVA!FieldDeclaration) then
+		true
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			false
+		else
+			self.refImmediateComposite().isInFieldDeclaration
+		endif
+	endif;
+
+helper context OclAny def : getClassDeclaration : JAVA!ClassDeclaration =
+	if self.oclIsTypeOf(JAVA!ClassDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getClassDeclaration
+		endif
+	endif;
+
+helper context OclAny def : getType : JAVA!Type =
+	if self.oclIsTypeOf(JAVA!SingleVariableDeclaration) or self.oclIsKindOf(JAVA!AbstractVariablesContainer) then
+		if self.type.oclIsUndefined() then
+			OclUndefined
+		else
+			self.type.type
+		endif
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getType
+		endif
+	endif;
+
+helper def : checkHiddenField(s1 : JAVA!VariableDeclaration, s2 : JAVA!VariableDeclaration) : Boolean =
+	let class1 : JAVA!ClassDeclaration = s1.getClassDeclaration in
+	let class2 : JAVA!ClassDeclaration = s2.getClassDeclaration in
+	let type1 : JAVA!Type = s1.getType in
+	let type2 : JAVA!Type = s2.getType in
+	if not class1.oclIsUndefined() and not class2.oclIsUndefined() and not type1.oclIsUndefined() and not type2.oclIsUndefined() then
+		class1 = class2 and s1 <> s2 and s1.name = s2.name and type1 = type2
+	else
+		false
+	endif;
+
+rule HiddenField {
+	from
+		s1: JAVA!VariableDeclaration, s2: JAVA!VariableDeclaration (s1.isInFieldDeclaration and thisModule.checkHiddenField(s1, s2))
+	to
+		t: CHK!HiddenField (
+			description <- 'field ' + s1.name + ' is shadowed by variable ' + s2.name	
+		)
+	do {
+		t.trace <- Sequence{s1, s2};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}

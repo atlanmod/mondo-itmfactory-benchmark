@@ -1,0 +1,37 @@
+-- @path JAVA=/code-quality-check/metamodels/java.ecore
+-- @path CHK=/code-quality-check/metamodels/anomalies.ecore
+
+module MissingSwitchDefault;
+create OUT : CHK from IN : JAVA;
+
+helper context OclAny def : getAbstractMethodDeclaration : JAVA!AbstractMethodDeclaration =
+	if self.oclIsKindOf(JAVA!AbstractMethodDeclaration) then
+		self
+	else
+		if self.oclIsTypeOf(JAVA!Model) then
+			OclUndefined
+		else
+			self.refImmediateComposite().getAbstractMethodDeclaration
+		endif
+	endif;
+
+helper context JAVA!SwitchStatement def : hasDefaultCase : Boolean =
+	self.statements->select(stat | stat.oclIsTypeOf(JAVA!SwitchCase))->exists(sc | sc.default);
+
+rule SwitchStatement {
+	from
+		s: JAVA!SwitchStatement (not s.hasDefaultCase)
+	to
+		t: CHK!MissingSwitchDefault (
+			description <- 'missing switch default in switch statement inside method ' + s.getAbstractMethodDeclaration.name
+		)
+	do {
+		t.trace <- Sequence{s};	
+	}
+}
+
+endpoint rule EndRule() {
+	do {
+		'TRANSFORMATION'.debug('END');
+	}
+}
